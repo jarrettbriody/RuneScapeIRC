@@ -68,7 +68,7 @@ const getRequest = (e, userForm) => {
 };
 
 const init = () => {
-    var connection = new WebSocket('wss://runescapeirc.herokuapp.com:3000');
+    var connection = new WebSocket('ws://runescapeirc.herokuapp.com:3000');
 
     console.dir(connection);
 
