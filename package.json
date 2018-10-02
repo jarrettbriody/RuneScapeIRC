@@ -1,0 +1,35 @@
+{
+  "name": "runescapeirc",
+  "version": "1.0.0",
+  "description": "An IRC for RuneScape players with functionality pertaining to RuneScape",
+  "main": "./server/server.js",
+  "scripts": {
+    "test": "echo \"Tests complete\"",
+    "start": "node ./server/server.js",
+    "pretest": "eslint ./server --fix",
+    "build": "babel ./client --out-file ./hosted/bundle.js",
+    "watch": "babel --watch ./client --out-file ./hosted/bundle.js",
+    "nodemon": "nodemon --watch ./server ./server/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jarrettbriody/RuneScapeIRC.git"
+  },
+  "author": "Jarrett Briody",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jarrettbriody/RuneScapeIRC/issues"
+  },
+  "homepage": "https://github.com/jarrettbriody/RuneScapeIRC#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "websocket": "^1.0.28"
+  }
+}

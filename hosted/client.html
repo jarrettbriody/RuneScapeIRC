@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>RuneScape IRC</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+
+  <script src="bundle.js"></script>
+</head>
+<body>
+  <section id="top">
+    <h3>RuneScape IRC</h3>
+    <form id="messageForm" action="/sendMessage" method="post">
+      <label for="name">Username: </label>
+      <input id="nameField" type="text" name="name" />
+      <label for="message">Message: </label>
+      <input id="messageField" type="text" name="message" />
+      <input type="submit" value="Send Message" />
+    </form>
+  </section>
+  <section id="content">
+  </section>
+</body>
+</html>
