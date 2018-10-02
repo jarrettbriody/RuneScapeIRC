@@ -70,7 +70,7 @@ var getRequest = function getRequest(e, userForm) {
 };
 
 var init = function init() {
-    var connection = new WebSocket('ws://runescapeirc.herokuapp.com:3000');
+    var connection = new WebSocket('wss://runescapeirc.herokuapp.com');
 
     console.dir(connection);
 
