@@ -1,14 +1,7 @@
-const parseJSON = (xhr, content) => {
-    const obj = JSON.parse(xhr.response);
-    if(obj.username && obj.message) {
-        const p = document.createElement('p');
-        p.textContent = `${obj.username}: ${obj.message}`;
-        content.appendChild(p);
-    }
-};
+let currentChannel;
 
-const handleResponse = (xhr) => {
-    const content = document.querySelector('#content');
+//handle the status codes and pass the callback through if applicable
+const handleResponse = (xhr, callback) => {
     switch(xhr.status) {
         case 200:
         
@@ -20,8 +13,20 @@ const handleResponse = (xhr) => {
         
         return;
         case 400:
-        
-        break;
+            if(xhr.response){
+                let errorJSON = JSON.parse(xhr.response);
+                switch(errorJSON.id){
+                    case 'invalidChannelParams':
+                        document.querySelector("#channelNameField").value = errorJSON.message;
+                        break;
+                    case 'invalidItemParams':
+                        document.querySelector("#itemNameField").value = errorJSON.message;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            break;
         case 404:
         
         break;
@@ -29,51 +34,141 @@ const handleResponse = (xhr) => {
         
         break;
     }
-    if(xhr.response) parseJSON(xhr, content);
+    if(xhr.response){
+        callback(JSON.parse(xhr.response));
+    }
 };
 
-const sendPost = (e,nameForm) => {
-    /*
+//send a post ajax call based on the passed in parameters
+const sendPost = (e,path,formData) => {
     const xhr = new XMLHttpRequest();
-    xhr.open(nameForm.getAttribute('method'), nameForm.getAttribute('action'));
+    xhr.open('POST', path);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.setRequestHeader ('Accept', 'application/json');
-    xhr.onload = () => handleResponse(xhr);
-    const formData = `name=${nameField.value}&age=${ageField.value}`;
+    xhr.onload = () => handleResponse(xhr, (data) => {
+
+    });
     xhr.send(formData);
     e.preventDefault();
     return false;
-    */
 };
 
-const sendMessage = (e,connection) => {
-    let jsonMessage = {user:document.querySelector('#nameField').value, message:document.querySelector('#messageField').value};
-    let stringToSend = JSON.stringify(jsonMessage);
-    console.dir(stringToSend);
+//send a websocket message based on this clients connection and some content
+const sendMessage = (e,connection, content) => {
+    let stringToSend = JSON.stringify(content);
     connection.send(stringToSend);
-    e.preventDefault();
+    if(e) e.preventDefault();
     return false;
 };
 
-const getRequest = (e, userForm) => {
-    /*
+//make a slightly more complex ajax call to get the list of channels, update the page according to the live channels
+const getChannelList = (connection) => {
     const xhr = new XMLHttpRequest();
-    xhr.open(userForm.querySelector('#methodSelect').value, userForm.querySelector('#urlField').value);
+    xhr.open('GET', '/getChannelList');
     xhr.setRequestHeader ('Accept', 'application/json');
-    xhr.onload = () => handleResponse(xhr);
+    xhr.onload = () => handleResponse(xhr, (data) => {
+        //keep track of remaining channels and newly created channels
+        let toBeKept = [];
+        for(let i = 0; i < data.channels.length; i++){
+            if(!document.querySelector("#channelList").querySelector(`#${data.channels[i]}`)){
+                let link = document.createElement('a');
+                link.innerHTML = data.channels[i];
+                link.href = `/${data.channels[i]}`;
+                link.id = data.channels[i];
+                link.onclick = (e) => {
+                    document.querySelector('#messages').innerHTML = "";
+                    document.querySelector('#channelHeader').querySelector('h1').innerHTML = e.target.innerHTML;
+                    currentChannel = e.target.innerHTML;
+                    sendMessage(e, connection, {type:'changeChannel', channel:e.target.innerHTML});
+                };
+                document.querySelector("#channelList").appendChild(link);
+                toBeKept.push(`${data.channels[i]}`);
+            }
+            else{
+                toBeKept.push(`${data.channels[i]}`);
+            }
+        }
+        //delete the channels on the html page if they are no longer live, ie they were deleted
+        let elements = [].slice.call(document.querySelector("#channelList").querySelectorAll('a'));
+        for(let i = 0; i < elements.length; i++){
+            if(!toBeKept.includes(elements[i].id)){
+                document.querySelector("#channelList").removeChild(elements[i]);
+                if(currentChannel === elements[i].id){
+                    currentChannel = "general";
+                    document.querySelector('#messages').innerHTML = "";
+                    document.querySelector('#channelHeader').querySelector('h1').innerHTML = currentChannel;
+                    sendMessage(undefined, connection, {type:'changeChannel', channel:currentChannel});
+                }
+            }
+        }
+    });
+    xhr.send();
+};
+
+//send a get or head ajax call
+const getRequest = (e, method, path, callback) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, path);
+    xhr.setRequestHeader ('Accept', 'application/json');
+    xhr.onload = () => handleResponse(xhr, callback);
     xhr.send();
     e.preventDefault();
     return false;
-    */
 };
 
+//scroll the chat down when a new message is created
+function updateScroll(){
+    let messagesDiv = document.querySelector("#messages");
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+//initialization
 const init = () => {
-    var connection = new WebSocket('wss://runescapeirc.herokuapp.com');
+    let connection = new WebSocket('wss://runescapeirc.herokuapp.com');
+    //let connection = new WebSocket('ws://127.0.0.1:3000');
+    currentChannel = 'general';
+    getChannelList(connection);
+    setInterval(() => {getChannelList(connection);}, 1000);
 
-    console.dir(connection);
+    document.querySelector("#channelAddButton").onclick = (e) => {
+        if(document.querySelector("#channelNameField").value.match(/^[0-9a-zA-Z]+$/)){
+            sendPost(e,'/createChannel', `channelName=${document.querySelector("#channelNameField").value}`);
+        }
+        else{
+            document.querySelector("#channelNameField").value = "Letters/numbers only";
+            e.preventDefault();
+            return false;
+        }
+    };
 
+    document.querySelector("#channelRemoveButton").onclick = (e) => {
+        if(document.querySelector("#channelNameField").value.match(/^[0-9a-zA-Z]+$/)){
+            sendPost(e,'/removeChannel', `channelName=${document.querySelector("#channelNameField").value}`);
+        }
+        else{
+            document.querySelector("#channelNameField").value = "Letters/numbers only";
+            e.preventDefault();
+            return false;
+        }
+    };
+
+    document.querySelector("#itemForm").addEventListener('submit', (e) => {
+        getRequest(e,'GET', `${document.querySelector("#itemForm").action}?${document.querySelector("#itemNameField").name}=${encodeURI(document.querySelector("#itemNameField").value.toLowerCase())}`, (json) => {
+            if(json.item){
+                document.querySelector("#item").innerHTML = "";
+                let newImage = document.createElement("img");
+                newImage.src = json.item.icon;
+                document.querySelector("#item").appendChild(newImage);
+                let newP = document.createElement("p");
+                newP.innerHTML = json.item.current.price;
+                document.querySelector("#item").appendChild(newP);
+            }
+        });
+    });
+
+    //websocket code, just managing messages
     connection.onopen = () => {
-        const content = document.querySelector('#content');
+        const content = document.querySelector('#messages');
         const p = document.createElement('p');
         p.textContent = 'Connected.';
         content.appendChild(p);
@@ -84,17 +179,18 @@ const init = () => {
     };
 
     connection.onmessage = (message) => {
-        const content = document.querySelector('#content');
+        const messages = document.querySelector('#messages');
         let json = JSON.parse(message.data);
         if(json.user && json.message && json.time) {
             const p = document.createElement('p');
             p.textContent = `${json.time} | ${json.user}: ${json.message}`;
-            content.appendChild(p);
+            messages.appendChild(p);
+            updateScroll();
         }
     };
 
     document.querySelector('#messageForm').addEventListener('submit', (e) => {
-        sendMessage(e,connection);
+        sendMessage(e,connection, {type: 'message', channel: currentChannel, user:document.querySelector('#nameField').value, message:document.querySelector('#messageField').value});
     });
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
