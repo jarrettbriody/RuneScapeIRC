@@ -24,6 +24,14 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  channels: {
+    type: Array,
+    default:[],
+  },
+  channelInvites: {
+    type: Array,
+    default:[],
+  },
   createdDate: {
     type: Date,
     default: Date.now,
@@ -33,6 +41,8 @@ const AccountSchema = new mongoose.Schema({
 AccountSchema.statics.toAPI = doc => ({
   // _id is built into your mongo document and is guaranteed to be unique
   username: doc.username,
+  channels: doc.channels,
+  channelInvites: doc.channelInvites,
   _id: doc._id,
 });
 

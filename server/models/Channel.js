@@ -20,6 +20,12 @@ const ChannelSchema = new mongoose.Schema({
     default: [],
   },
 
+  owner: {
+    type: mongoose.Schema.ObjectId,
+    required: true,
+    ref: 'Account',
+  },
+
   createdDate: {
     type: Date,
     default: Date.now,
@@ -38,8 +44,9 @@ ChannelSchema.statics.findByID = (_id, callback) => {
   return ChannelModel.find(search).select('name messages').exec(callback);
 };
 
-ChannelSchema.statics.removeChannel = (_id, callback) => {
+ChannelSchema.statics.removeChannel = (ownerId, _id, callback) => {
   const search = {
+    owner: convertId(ownerId),
     _id,
   };
 
