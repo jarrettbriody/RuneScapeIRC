@@ -1,10 +1,6 @@
 {
   "name": "runescapeirc",
   "version": "1.0.0",
-  "engines": {
-    "node": "7.5.0",
-    "npm": "4.0.5"
-  },
   "description": "An IRC for RuneScape players with functionality pertaining to RuneScape",
   "main": "./server/app.js",
   "scripts": {
