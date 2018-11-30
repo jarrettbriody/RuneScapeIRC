@@ -1,8 +1,8 @@
 
 let currentChannel = "";
 
-//let connection = new WebSocket('wss://runescapeirc.herokuapp.com');
-let connection = new WebSocket('ws://127.0.0.1:3000');
+let connection = new WebSocket('wss://runescapeirc.herokuapp.com');
+//let connection = new WebSocket('ws://127.0.0.1:3000');
 
 // stolen from https://www.quirksmode.org/js/cookies.html ---------------------------------------------------
 function readCookie(name) {
