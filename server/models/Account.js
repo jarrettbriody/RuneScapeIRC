@@ -24,14 +24,6 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  channels: {
-    type: Array,
-    default:[],
-  },
-  channelInvites: {
-    type: Array,
-    default:[],
-  },
   createdDate: {
     type: Date,
     default: Date.now,
@@ -41,12 +33,10 @@ const AccountSchema = new mongoose.Schema({
 AccountSchema.statics.toAPI = doc => ({
   // _id is built into your mongo document and is guaranteed to be unique
   username: doc.username,
-  channels: doc.channels,
-  channelInvites: doc.channelInvites,
   _id: doc._id,
 });
 
-//check if a password is valid
+// check if a password is valid
 const validatePassword = (doc, password, callback) => {
   const pass = doc.password;
 
@@ -66,7 +56,7 @@ AccountSchema.statics.findByUsername = (name, callback) => {
   return AccountModel.findOne(search, callback);
 };
 
-//create a hash for a password string
+// create a hash for a password string
 AccountSchema.statics.generateHash = (password, callback) => {
   const salt = crypto.randomBytes(saltLength);
 
@@ -75,7 +65,7 @@ AccountSchema.statics.generateHash = (password, callback) => {
   );
 };
 
-//authenticate the requested account
+// authenticate the requested account
 AccountSchema.statics.authenticate = (username, password, callback) =>
 AccountModel.findByUsername(username, (err, doc) => {
   if (err) {

@@ -31,9 +31,10 @@ const login = (request, response) => {
       return res.status(401).json({ error: 'Incorrect username or password.' });
     }
 
+    res.cookie('username', account.username);
     req.session.account = Account.AccountModel.toAPI(account);
 
-    return res.json({ redirect: '/tasks' });
+    return res.json({ redirect: '/dashboard' });
   });
 };
 
@@ -68,7 +69,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      return res.json({ redirect: '/tasks' });
+      return res.json({ redirect: '/dashboard' });
     });
 
     savePromise.catch((err) => {
@@ -124,7 +125,7 @@ const changePassword = (request, response) => {
 
           const savePromise = updatedDoc.save();
 
-          savePromise.then(() => res.json({ redirect: '/tasks' }));
+          savePromise.then(() => res.json({ redirect: '/dashboard' }));
 
           savePromise.catch((err3) => {
             console.log(err3);
@@ -134,70 +135,6 @@ const changePassword = (request, response) => {
           return savePromise;
         }));
     });
-};
-
-const addChannelInvite = (request,response) => {
-  const req = request;
-  const res = response;
-
-  if (!req.body.username){
-    return res.status(400).json({ error: 'Username is required.' });
-  }
-
-  return Account.AccountModel.findByUsername(req.body.username, (err,doc) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ error: 'An error occurred' });
-    }
-
-    const updatedDoc = doc;
-
-    updatedDoc.channelInvites.push(req.body.channelID);
-
-    const savePromise = updatedDoc.save();
-
-    savePromise.then(() => res.json({ redirect: '/channels' }));
-
-    savePromise.catch((err2) => {
-      console.log(err2);
-      return res.status(400).json({ error: 'An error occurred.' });
-    });
-
-    return savePromise;
-  });
-};
-
-const acceptChannelInvite = (request,response) => {
-  const req = request;
-  const res = response;
-
-  if (!req.body.username){
-    return res.status(400).json({ error: 'Username is required.' });
-  }
-
-  return Account.AccountModel.findByUsername(req.body.username, (err,doc) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ error: 'An error occurred' });
-    }
-
-    const updatedDoc = doc;
-
-    updatedDoc.channelInvites.splice(indexOf(req.body.channelID),1);
-
-    updatedDoc.channels.push(req.body.channelID);
-
-    const savePromise = updatedDoc.save();
-
-    savePromise.then(() => res.json({ redirect: '/channelInvites' }));
-
-    savePromise.catch((err2) => {
-      console.log(err2);
-      return res.status(400).json({ error: 'An error occurred.' });
-    });
-
-    return savePromise;
-  });
 };
 
 const getToken = (request, response) => {

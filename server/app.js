@@ -38,6 +38,7 @@ if (process.env.REDISCLOUD_URL) {
 const router = require('./router.js');
 
 const app = express();
+require('express-ws')(app);
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
 app.enable('trust proxy');

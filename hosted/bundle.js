@@ -1,202 +1,269 @@
-'use strict';
+"use strict";
 
-var currentChannel = void 0;
+var currentChannel = "";
 
-//handle the status codes and pass the callback through if applicable
-var handleResponse = function handleResponse(xhr, callback) {
-    switch (xhr.status) {
-        case 200:
+//let connection = new WebSocket('wss://runescapeirc.herokuapp.com');
+var connection = new WebSocket('ws://127.0.0.1:3000');
 
-            break;
-        case 201:
-
-            break;
-        case 204:
-
-            return;
-        case 400:
-            if (xhr.response) {
-                var errorJSON = JSON.parse(xhr.response);
-                switch (errorJSON.id) {
-                    case 'invalidChannelParams':
-                        document.querySelector("#channelNameField").value = errorJSON.message;
-                        break;
-                    case 'invalidItemParams':
-                        document.querySelector("#itemNameField").value = errorJSON.message;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            break;
-        case 404:
-
-            break;
-        default:
-
-            break;
+// stolen from https://www.quirksmode.org/js/cookies.html ---------------------------------------------------
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1, c.length);
+        }if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
     }
-    if (xhr.response) {
-        callback(JSON.parse(xhr.response));
+    return null;
+}
+//-----------------------------------------------------------------------------------------------------------
+
+var handleCreateChannel = function handleCreateChannel(e) {
+    e.preventDefault();
+    $("#errorContainer").animate({ width: 'hide' }, 350);
+    if ($("#channelName").val() == '') {
+        handleError("Channel name is required.");
+        return false;
     }
+    document.querySelector("#newChannelForm").action = e.target.action;
+    sendAjax('POST', $("#newChannelForm").attr("action"), $("#newChannelForm").serialize(), function () {
+        loadChannelsFromServer();
+    });
+    return false;
 };
 
-//send a post ajax call based on the passed in parameters
-var sendPost = function sendPost(e, path, formData) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', path);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.onload = function () {
-        return handleResponse(xhr, function (data) {});
-    };
-    xhr.send(formData);
+var onChannelClick = function onChannelClick(e, channel) {
     e.preventDefault();
+    console.dir(document.cookie);
+    sendAjax('POST', '/getSingleChannel', "channelID=" + channel._id + "&_csrf=" + document.querySelector('#hiddenCSRF').innerHTML, function (data) {
+        currentChannel = channel._id;
+        ReactDOM.render(React.createElement(Channel, { channel: data.channel[0] }), document.querySelector("#channelSection"));
+    });
     return false;
 };
 
 //send a websocket message based on this clients connection and some content
-var sendMessage = function sendMessage(e, connection, content) {
+var handleSendMessage = function handleSendMessage(e) {
+    var user = readCookie('username');
+    var content = {
+        username: user,
+        content: document.querySelector("#messageInput").value,
+        createdDate: Date.now(),
+        channelID: currentChannel
+    };
     var stringToSend = JSON.stringify(content);
+    console.dir(stringToSend);
     connection.send(stringToSend);
     if (e) e.preventDefault();
     return false;
 };
 
-//make a slightly more complex ajax call to get the list of channels, update the page according to the live channels
-var getChannelList = function getChannelList(connection) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/getChannelList');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.onload = function () {
-        return handleResponse(xhr, function (data) {
-            //keep track of remaining channels and newly created channels
-            var toBeKept = [];
-            for (var i = 0; i < data.channels.length; i++) {
-                if (!document.querySelector("#channelList").querySelector('#' + data.channels[i])) {
-                    var link = document.createElement('a');
-                    link.innerHTML = data.channels[i];
-                    link.href = '/' + data.channels[i];
-                    link.id = data.channels[i];
-                    link.onclick = function (e) {
-                        document.querySelector('#messages').innerHTML = "";
-                        document.querySelector('#channelHeader').querySelector('h1').innerHTML = e.target.innerHTML;
-                        currentChannel = e.target.innerHTML;
-                        sendMessage(e, connection, { type: 'changeChannel', channel: e.target.innerHTML });
-                    };
-                    document.querySelector("#channelList").appendChild(link);
-                    toBeKept.push('' + data.channels[i]);
-                } else {
-                    toBeKept.push('' + data.channels[i]);
-                }
-            }
-            //delete the channels on the html page if they are no longer live, ie they were deleted
-            var elements = [].slice.call(document.querySelector("#channelList").querySelectorAll('a'));
-            for (var _i = 0; _i < elements.length; _i++) {
-                if (!toBeKept.includes(elements[_i].id)) {
-                    document.querySelector("#channelList").removeChild(elements[_i]);
-                    if (currentChannel === elements[_i].id) {
-                        currentChannel = "general";
-                        document.querySelector('#messages').innerHTML = "";
-                        document.querySelector('#channelHeader').querySelector('h1').innerHTML = currentChannel;
-                        sendMessage(undefined, connection, { type: 'changeChannel', channel: currentChannel });
-                    }
-                }
-            }
-        });
-    };
-    xhr.send();
+var NavBar = function NavBar(props) {
+    return React.createElement(
+        "div",
+        { id: "navBar" },
+        React.createElement(
+            "div",
+            { id: "titleContainer" },
+            React.createElement(
+                "h1",
+                { className: "appTitle" },
+                "RuneScape IRC"
+            )
+        ),
+        React.createElement(
+            "a",
+            { href: "/login" },
+            React.createElement("img", { id: "logo", src: "/assets/img/logo.png", alt: "logo", title: "Home" })
+        ),
+        React.createElement(
+            "div",
+            { "class": "navlink" },
+            React.createElement(
+                "a",
+                { href: "/logout" },
+                "Log out"
+            )
+        ),
+        React.createElement(
+            "form",
+            { id: "newChannelForm", name: "newChannelForm",
+                onSubmit: handleCreateChannel,
+                action: "/createChannel",
+                method: "POST",
+                className: "channelForm"
+            },
+            React.createElement(
+                "h5",
+                { className: "inputLabels" },
+                "Channel Name:"
+            ),
+            React.createElement("input", { id: "channelName", type: "text", name: "name", placeholder: "Task Name" }),
+            React.createElement("input", { id: "currentCSRF", type: "hidden", name: "_csrf", value: props.csrf }),
+            React.createElement(
+                "button",
+                { type: "submit", className: "formSubmit" },
+                "Create Channel"
+            )
+        )
+    );
 };
 
-//send a get or head ajax call
-var getRequest = function getRequest(e, method, path, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open(method, path);
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.onload = function () {
-        return handleResponse(xhr, callback);
-    };
-    xhr.send();
-    e.preventDefault();
-    return false;
-};
-
-//scroll the chat down when a new message is created
-function updateScroll() {
-    var messagesDiv = document.querySelector("#messages");
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-//initialization
-var init = function init() {
-    var connection = new WebSocket('wss://runescapeirc.herokuapp.com');
-    //let connection = new WebSocket('ws://127.0.0.1:3000');
-    currentChannel = 'general';
-    getChannelList(connection);
-    setInterval(function () {
-        getChannelList(connection);
-    }, 1000);
-
-    document.querySelector("#channelAddButton").onclick = function (e) {
-        if (document.querySelector("#channelNameField").value.match(/^[0-9a-zA-Z]+$/)) {
-            sendPost(e, '/createChannel', 'channelName=' + document.querySelector("#channelNameField").value);
-        } else {
-            document.querySelector("#channelNameField").value = "Letters/numbers only";
-            e.preventDefault();
-            return false;
-        }
-    };
-
-    document.querySelector("#channelRemoveButton").onclick = function (e) {
-        if (document.querySelector("#channelNameField").value.match(/^[0-9a-zA-Z]+$/)) {
-            sendPost(e, '/removeChannel', 'channelName=' + document.querySelector("#channelNameField").value);
-        } else {
-            document.querySelector("#channelNameField").value = "Letters/numbers only";
-            e.preventDefault();
-            return false;
-        }
-    };
-
-    document.querySelector("#itemForm").addEventListener('submit', function (e) {
-        getRequest(e, 'GET', document.querySelector("#itemForm").action + '?' + document.querySelector("#itemNameField").name + '=' + encodeURI(document.querySelector("#itemNameField").value.toLowerCase()), function (json) {
-            if (json.item) {
-                document.querySelector("#item").innerHTML = "";
-                var newImage = document.createElement("img");
-                newImage.src = json.item.icon;
-                document.querySelector("#item").appendChild(newImage);
-                var newP = document.createElement("p");
-                newP.innerHTML = json.item.current.price;
-                document.querySelector("#item").appendChild(newP);
-            }
-        });
+//create a single task expanded menu
+var Channel = function Channel(props) {
+    var channelMessages = props.channel.messages.map(function (message) {
+        return React.createElement(
+            "div",
+            { className: "message" },
+            React.createElement(
+                "p",
+                null,
+                message.createdDate + " | " + message.username + ": " + message.content
+            )
+        );
     });
 
-    //websocket code, just managing messages
-    connection.onopen = function () {
-        var content = document.querySelector('#messages');
-        var p = document.createElement('p');
-        p.textContent = 'Connected.';
-        content.appendChild(p);
-    };
+    return React.createElement(
+        "div",
+        { id: "channel" },
+        React.createElement(
+            "div",
+            { id: "channelTitleContainer" },
+            React.createElement(
+                "h2",
+                { id: "channelTitle" },
+                props.channel.name
+            )
+        ),
+        React.createElement(
+            "div",
+            { id: "messages" },
+            channelMessages
+        ),
+        React.createElement(
+            "form",
+            { id: "sendMessageForm", name: "sendMessageForm",
+                onSubmit: handleSendMessage,
+                className: "channelForm"
+            },
+            React.createElement(
+                "h5",
+                { className: "inputLabels" },
+                "Message:"
+            ),
+            React.createElement("input", { id: "messageInput", type: "text", name: "message", placeholder: "message" }),
+            React.createElement(
+                "button",
+                { type: "submit", className: "formSubmit" },
+                "Send"
+            )
+        )
+    );
+};
 
-    connection.onerror = function (error) {};
+//generate the list of all user tasks
+var ChannelList = function ChannelList(props) {
+    console.dir(props.channels);
+    var channelLinks = props.channels.map(function (channel) {
+        return React.createElement(
+            "div",
+            { key: channel._id, className: "channelLinkContainer" },
+            React.createElement(
+                "a",
+                { className: "channelLink", href: "/getSingleChannel", onClick: function onClick(e) {
+                        onChannelClick(e, channel);
+                    } },
+                channel.name
+            )
+        );
+    });
+
+    return React.createElement(
+        "div",
+        { id: "channelList" },
+        React.createElement(
+            "div",
+            { id: "channelListTitleContainer" },
+            React.createElement(
+                "h2",
+                { id: "channelListTitle" },
+                "Channels"
+            )
+        ),
+        channelLinks
+    );
+};
+
+//load all of the user tasks from the server
+var loadChannelsFromServer = function loadChannelsFromServer(csrf) {
+    sendAjax('GET', '/getChannels', null, function (data) {
+        ReactDOM.render(React.createElement(ChannelList, { channels: data.channels, csrf: csrf }), document.querySelector("#channelListSection"));
+    });
+};
+
+var createChannelListWindow = function createChannelListWindow(csrf) {
+    ReactDOM.render(React.createElement(ChannelList, { channels: [], csrf: csrf }), document.querySelector("#channelListSection"));
+};
+
+var createNavBar = function createNavBar(csrf) {
+    ReactDOM.render(React.createElement(NavBar, { csrf: csrf }), document.querySelector("nav"));
+};
+
+var setup = function setup(csrf) {
+    createNavBar(csrf);
+
+    document.querySelector("#hiddenCSRF").innerHTML = csrf;
+
+    createChannelListWindow(csrf);
+
+    loadChannelsFromServer(csrf);
 
     connection.onmessage = function (message) {
         var messages = document.querySelector('#messages');
         var json = JSON.parse(message.data);
-        if (json.user && json.message && json.time) {
+        if (json.username && json.content && json.createdDate) {
             var p = document.createElement('p');
-            p.textContent = json.time + ' | ' + json.user + ': ' + json.message;
+            p.textContent = json.time + " | " + json.user + ": " + json.message;
             messages.appendChild(p);
-            updateScroll();
+            //updateScroll();
         }
     };
-
-    document.querySelector('#messageForm').addEventListener('submit', function (e) {
-        sendMessage(e, connection, { type: 'message', channel: currentChannel, user: document.querySelector('#nameField').value, message: document.querySelector('#messageField').value });
-    });
-
-    window.WebSocket = window.WebSocket || window.MozWebSocket;
 };
 
-window.onload = init;
+var getToken = function getToken() {
+    sendAjax("GET", "/getToken", null, function (result) {
+        setup(result.csrfToken);
+    });
+};
+
+$(document).ready(function () {
+    getToken();
+});
+'use strict';
+
+var handleError = function handleError(message) {
+  $('#errorMessage').text(message);
+  $('#errorContainer').animate({ width: 'toggle' }, 350);
+};
+
+var redirect = function redirect(response) {
+  $('#errorContainer').animate({ width: 'hide' }, 350);
+  window.location = response.redirect;
+};
+
+var sendAjax = function sendAjax(type, action, data, success) {
+  // console.dir(action + " " + data);
+  $.ajax({
+    cache: false,
+    type: type,
+    url: action,
+    data: data,
+    dataType: 'json',
+    success: success,
+    error: function error(xhr, status, _error) {
+      var messageObj = JSON.parse(xhr.responseText);
+      handleError(messageObj.error);
+    }
+  });
+};
