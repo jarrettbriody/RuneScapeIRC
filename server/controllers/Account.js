@@ -69,6 +69,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
+      res.cookie('username', newAccount.username);
       return res.json({ redirect: '/dashboard' });
     });
 
