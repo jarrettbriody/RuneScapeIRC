@@ -77,9 +77,9 @@ app.use((err, req, res, next) => {
 
 // rate limiter to limit spam requests
 const apiLimiter = rateLimit({
-  windowMs: 15 * 1000,
+  windowMs: 3 * 1000,
   max: 1,
-  message: { error: 'You have exceeded the rate limit. Try again in 15 seconds.' },
+  message: { error: 'You have exceeded the rate limit. Try again in 3 seconds.' },
 });
 app.use('/signup', apiLimiter);
 app.use('/changePassword', apiLimiter);
