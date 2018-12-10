@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
+const redis = require('redis');
 const RedisStore = require('connect-redis')(session);
 const url = require('url');
 const csrf = require('csurf');
@@ -33,6 +34,23 @@ let redisPASS;
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
   redisPASS = redisURL.auth.split(':')[1];
+}
+
+const redisClient = redis.createClient({ host: redisURL.hostname, port: redisURL.port });
+
+redisClient.on('ready', () => {
+  console.log('Connected to Redis.');
+});
+
+redisClient.on('error', () => {
+  console.log('There was an error attempting to connect to Redis.');
+});
+
+if (process.env.REDISCLOUD_URL) {
+  redisClient.auth(redisPASS, (err, reply) => {
+    console.dir(err);
+    console.log(reply);
+  });
 }
 
 const router = require('./router.js');

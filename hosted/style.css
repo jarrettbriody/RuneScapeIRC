@@ -1,6 +1,60 @@
-img{
-    width:30px;
-    height:30px;
+html, body{
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+#content{
+    height: calc(100% - 53px);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display:inline-block;
+    background-color:lightgrey;
+    overflow-y:auto;
+}
+
+#channelListSection{
+    width:20%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color:#8c8c8c;
+    border-right: 2px solid black;
+    box-sizing:border-box;
+    float:left;
+    vertical-align: middle;
+}
+
+#channelSection{
+    width:80%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color:lightgrey;
+    box-sizing:border-box;
+    float:right;
+    position:relative;
+}
+
+#channelListTitle{
+    text-align:center;
+    font-size:2em;
+    padding:0px;
+    margin:0px;
+}
+
+#channelListTitleContainer{
+    padding:0px;
+    margin:0px;
+    height:calc(2em + (1.66em * 2));
+    background-color: #8c8c8c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #hiddenCSRF{
@@ -9,4 +63,506 @@ img{
 
 .hiddenID{
     display:none;
+}
+
+nav {
+    width: 100%;
+    height: 50px;
+    background-color: #595959;
+    text-align:center;
+    position: relative;
+    border-bottom:3px solid black;
+}
+
+.navlink {
+    padding: 5px;
+    margin-left: 10px;
+    margin-top:7px;
+    color: black;
+    font-size: 1.3em;
+    float: left;
+}
+
+nav .navlink:first-of-type {
+    margin-left: 50px;
+}
+
+#toolLink{
+    float: right;
+    margin-top:9px;
+}
+
+#profileLink {
+    float: right;
+    margin-right:25px;
+}
+
+.navlink a, .navlink a:link, .navlink a:visited, .navlink a:hover, .navlink a:active {
+    color: black;
+    text-decoration: none;
+    padding: 5px;
+    background-color: lightgray;
+    transition: background-color 0.4s ease;
+    border-radius: 8px;
+    border: 2px solid black;
+}
+
+.navlink a:hover {
+    transition: background-color 0.8s ease;
+    background-color: white;
+}
+
+nav h1{
+    color:black;
+    padding:0px;
+    margin:0px;
+    text-shadow: 1px 1px lightgray;
+}
+
+#titleContainer{
+    padding:0px;
+    position:absolute;
+    left: 0; 
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto; 
+    width:300px;
+    vertical-align: center;
+    font-size: 1.75em;
+}
+
+#errorMessage {
+    width: 250px;
+    height: 100px;
+    z-index: 200;
+}
+
+#errorMessage h3 {
+
+}
+
+#errorContainer{
+    padding:0px 15px;
+    margin:0px;
+    position:fixed;
+    bottom:0px;
+    left: 0px;
+    background-color:#595959;
+    border:1px solid black;
+    box-sizing: border-box;
+    display:none;
+}
+
+.channelLinkContainer{
+    display:block;
+    text-align:center;
+}
+
+.channelLinkContainer a{
+    /*
+    text-align:left;
+    display:inline-block;
+    */
+    font-size: 1.5em;
+}
+
+#sendMessageForm{
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    height:100px;
+    padding: 10px 00px;
+    margin: 0px;
+    border-top:2px solid #595959;
+    background-color:#8c8c8c;
+    font-size:1.5em;
+    text-align:center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sendMessageForm input{
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    width: 70%;
+    font-size:1.0em;
+}
+
+#sendMessageForm button{
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    font-size:1.0em;
+}
+
+#sendMessageForm label{
+    margin-right:20px;
+}
+
+#channelTitle{
+    text-align:center;
+    font-size:2em;
+    padding:0px;
+    margin:0px;
+}
+
+#messages{
+    padding: 0px 50px;
+    font-size:1.3em;
+    overflow-y:auto;
+    height: calc(100% - 100px - 2em - (1.66em * 2));
+    border-top:2px solid #595959;
+}
+
+#channelList{
+    position:relative;
+    height:100%;
+}
+
+#channels{
+    padding: 0px 50px;
+    overflow-y:auto;
+    height: calc(100% - 120px - 2em - (1.66em * 2));
+    border-top:2px solid #595959;
+}
+
+#channelTitleContainer{
+    padding:0px;
+    margin:0px;
+    height:calc(2em + (1.66em * 2));
+    background-color: #8c8c8c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#channelListButtons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    height:100px;
+    padding: 10px 00px;
+    margin: 0px;
+    border-top:2px solid #595959;
+}
+
+.channelListButton{
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1.0em;
+    margin:10px;
+    padding:10px;
+    background-color: lightgray;
+    border-color: #595959;
+    border-radius:8px;
+}
+
+.channelListButton:hover {
+    transition: background-color 0.8s ease;
+    background-color: white;
+}
+
+#loginForm, #signupForm, #changePasswordForm, #itemPriceSection{
+    text-align:center;
+    background-color:#8c8c8c;
+    border: 2px solid black;
+    border-radius:10px;
+    width:20%;
+}
+
+hr{
+    width:80%;
+    color: lightgray;
+}
+
+#loginForm input, #signupForm input, #changePasswordForm input, #newChannelForm input, #itemForm input{
+    font-size: 1.2em;
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#itemForm input{
+    margin: 1.0em 0px;
+}
+
+#itemContainer{
+
+}
+
+#accountFormContainer, #runeScapeTools{
+    height:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#accountFormContainer h1{
+    font-size:2.0em;
+}
+
+#accountFormContainer h3{
+    font-size:1.5em;
+}
+
+#accountFormContainer .formSubmit{
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    border-color: #595959;
+}
+
+#newChannelForm{
+    margin:25px;
+    padding:25px 0px;
+    text-align:center;
+    background-color:#8c8c8c;
+    border: 2px solid black;
+    border-radius:10px;
+}
+
+#newChannelForm label{
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+#newChannelForm input{
+    font-size: 1.5em;
+}
+
+#newChannelForm .formSubmit{
+    margin:0px 0px;
+    border-radius:8px;
+    font-size: 1.5em;
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    border-color: #595959;
+}
+
+#changePassButton{
+    width:200px;
+}
+
+#loginFormInput h5, #signupFormInput h5, #changePasswordForm h5, #newChannelForm h5{
+    margin-bottom:0px;
+    font-size: 1.5em;
+}
+
+#loginForm .formSubmit, #signupForm .formSubmit, #changePasswordForm .formSubmit{
+    margin-top:35px;
+    margin-bottom:35px;
+    border-radius:8px;
+    font-size: 1.5em;
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    border-color: #595959;
+}
+
+#editChannelsContainer, #channelInvitesContainer{
+    width:50%;
+    margin:0px auto;
+}
+
+#editChannelsContainer hr{
+    width:100%;
+}
+
+.editChannel, .channelInvite{
+    border: 1px solid black;
+    display:block;
+    margin:25px;
+    background-color:#8c8c8c;
+}
+
+#editChannelsContainer .editChannel hr{
+    width:80%;
+}
+
+.editChannel *{
+}
+
+#editChannelNameContainer{
+    text-align: center;
+    display:block;
+    font-size: 2.0em;
+}
+
+#editChannelFormContainer {
+
+    margin:16px 0px;
+    display:block;
+}
+
+#editChannelFormContainer label{
+    margin-right:10px;
+    font-size:1.2em;
+}
+
+#editChannelFormContainer input, #editChannelFormContainer button{
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    font-size:1.2em;
+}
+
+#editChannelButtonContainer {
+    text-align: center;
+    display:block;
+    margin:16px 0px;
+}
+
+#editChannelButtonContainer button{
+    font-family: 'RuneScape UF', Verdana, Geneva, Tahoma, sans-serif;
+    font-size:1.2em;
+}
+
+#editChannelFormContainer *{
+    display:inline-block;
+    margin:auto 0px;
+}
+
+#addUserForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#emptyEditChannels{
+    font-size: 1.4em;
+    margin: 2em 0px;
+    text-align: center;
+}
+
+#profile{
+    width:50%;
+    margin:0px auto;
+}
+
+#profileLinksContainer{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom:2px solid black;
+    border-right:2px solid black;
+    border-left:2px solid black;
+    width:100%;
+    background-color:#8c8c8c;
+    box-sizing:border-box;
+}
+
+#profileLinksContainer .navLink{
+    margin:0px;
+    padding:5px 0px;
+}
+
+#profileLinksContainer .navLink a{
+    border-radius:0px;
+    border:none;
+    border-right: 2px solid black;
+}
+
+#profileLinksContainer .navLink:last-of-type a{
+    border-radius:0px;
+    border:none;
+    border-right: none;
+}
+
+#profileImg{
+    height:250px;
+    width:250px;
+    border:2px solid black;
+    border-radius:8px;
+}
+#profileImgContainer{
+    display:inline-block;
+}
+
+#profileUsername{
+    font-size:2em;
+    text-align: center;
+}
+
+#profileUserDescContainer{
+    width:calc(100% - 254px - 20px);
+    display:inline-block;
+    vertical-align: middle;
+    position:absolute;
+    top:0px;
+    padding-left:20px;
+}
+
+#profileRow1{
+    margin: 15px 0px;
+    vertical-align: middle;
+    position:relative;
+}
+
+#profileRow1 hr{
+    width:100%;
+}
+
+.addRemoveButtonImg{
+    width:25px;
+    height:25px;
+    margin:0px;
+}
+
+#acceptInviteButtonContainer,#declineInviteButtonContainer{
+    
+    display:inline-block;
+}
+
+#channelInviteNameContainer{
+    font-size: 2.0em;
+    display:inline-block;
+    width:50%;
+    text-align:center;
+    border-right: 2px solid black;
+    box-sizing: border-box;
+}
+
+#acceptInviteButtonContainer button, #declineInviteButtonContainer button{
+    padding:0px;
+    display:inline-block;
+}
+
+#invButtons{
+    width:50%;
+    display:inline-block;
+    text-align:center;
+    margin:auto;
+}
+
+#pageTitle{
+    text-align:center;
+    font-size:2em;
+}
+
+#emptyChannelInvites{
+    text-align:center;
+    font-size:1.4em;
+}
+
+@media only screen and (max-width: 980px) {
+    #profileLinksContainer .navLink a{
+        border-right:none;
+    }
+    #profileLinksContainer .navLink{
+    }
+    #profileLinksContainer{
+
+    }
+  }
+
+/* width */
+#messages ::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+#messages ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+/* Handle */
+#messages ::-webkit-scrollbar-thumb {
+    background: green; 
+}
+
+/* Handle on hover */
+#messages ::-webkit-scrollbar-thumb:hover {
+    background: lightgreen; 
 }

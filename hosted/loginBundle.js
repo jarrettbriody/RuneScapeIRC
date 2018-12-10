@@ -1,9 +1,10 @@
-"use strict";
+'use strict';
 
 //check for valid login values, send post
 var handleLogin = function handleLogin(e) {
+    document.querySelector('#errorContainer').style.display = 'none';
     e.preventDefault();
-    $("#errorContainer").animate({ width: 'hide' }, 350);
+    // $("#errorContainer").animate({width:'hide'},350);
     if ($("#user").val() == '' || $("pass").val() == '') {
         handleError("Both username and password fields are required.");
         return false;
@@ -15,8 +16,9 @@ var handleLogin = function handleLogin(e) {
 
 //check for valid signup values, send post
 var handleSignup = function handleSignup(e) {
+    document.querySelector('#errorContainer').style.display = 'none';
     e.preventDefault();
-    $("#errorContainer").animate({ width: 'hide' }, 350);
+    // $("#errorContainer").animate({width:'hide'},350);
     if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
         handleError("All fields are required.");
         return false;
@@ -31,38 +33,52 @@ var handleSignup = function handleSignup(e) {
 
 var NavBar = function NavBar() {
     return React.createElement(
-        "div",
-        { id: "navBar" },
+        'div',
+        { id: 'navBar' },
         React.createElement(
-            "div",
-            { id: "titleContainer" },
+            'div',
+            { id: 'titleContainer' },
             React.createElement(
-                "h1",
-                { className: "appTitle" },
-                "RuneScape IRC"
+                'h1',
+                { className: 'appTitle' },
+                'RuneScape IRC'
             )
         ),
         React.createElement(
-            "a",
-            { href: "/login" },
-            React.createElement("img", { id: "logo", src: "/assets/img/logo.png", alt: "logo", title: "Home" })
-        ),
-        React.createElement(
-            "div",
-            { className: "navlink" },
+            'div',
+            { className: 'navlink' },
             React.createElement(
-                "a",
-                { id: "loginButton", href: "/login" },
-                "Login"
+                'a',
+                { href: '/login', title: 'Home' },
+                React.createElement('i', { className: 'fas fa-home' })
             )
         ),
         React.createElement(
-            "div",
-            { className: "navlink" },
+            'div',
+            { className: 'navlink' },
             React.createElement(
-                "a",
-                { id: "signupButton", href: "/signup" },
-                "Sign up"
+                'a',
+                { id: 'loginButton', href: '/login' },
+                React.createElement(
+                    'span',
+                    { className: 'navlinkText' },
+                    'Log in '
+                ),
+                React.createElement('i', { className: 'fas fa-sign-in-alt' })
+            )
+        ),
+        React.createElement(
+            'div',
+            { className: 'navlink' },
+            React.createElement(
+                'a',
+                { id: 'signupButton', href: '/signup' },
+                React.createElement(
+                    'span',
+                    { className: 'navlinkText' },
+                    'Sign up '
+                ),
+                React.createElement('i', { className: 'fas fa-user-plus' })
             )
         )
     );
@@ -71,96 +87,106 @@ var NavBar = function NavBar() {
 //create react page for login
 var LoginWindow = function LoginWindow(props) {
     return React.createElement(
-        "form",
-        { id: "loginForm", name: "loginForm",
-            onSubmit: handleLogin,
-            action: "/login",
-            method: "POST",
-            className: "mainForm"
-        },
+        'div',
+        { id: 'accountFormContainer' },
         React.createElement(
-            "h1",
-            { className: "appTitle" },
-            "RuneScape IRC"
-        ),
-        React.createElement(
-            "h3",
-            { className: "signInTitle" },
-            "Login"
-        ),
-        React.createElement(
-            "div",
-            { id: "loginFormInput" },
+            'form',
+            { id: 'loginForm', name: 'loginForm',
+                onSubmit: handleLogin,
+                action: '/login',
+                method: 'POST',
+                className: 'mainForm'
+            },
             React.createElement(
-                "div",
-                { id: "userContainer" },
-                React.createElement(
-                    "h5",
-                    null,
-                    "Username:"
-                ),
-                React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" })
+                'h1',
+                { className: 'appTitle' },
+                'RuneScape IRC'
             ),
             React.createElement(
-                "div",
-                { id: "passContainer" },
+                'h3',
+                { className: 'signInTitle' },
+                'Login'
+            ),
+            React.createElement('hr', null),
+            React.createElement(
+                'div',
+                { id: 'loginFormInput' },
                 React.createElement(
-                    "h5",
-                    null,
-                    "Password:"
+                    'div',
+                    { id: 'userContainer' },
+                    React.createElement(
+                        'h5',
+                        null,
+                        'Username:'
+                    ),
+                    React.createElement('input', { id: 'user', type: 'text', name: 'username', placeholder: 'username' })
                 ),
-                React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" })
-            )
-        ),
-        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign in" })
+                React.createElement(
+                    'div',
+                    { id: 'passContainer' },
+                    React.createElement(
+                        'h5',
+                        null,
+                        'Password:'
+                    ),
+                    React.createElement('input', { id: 'pass', type: 'password', name: 'pass', placeholder: 'password' })
+                )
+            ),
+            React.createElement('input', { type: 'hidden', name: '_csrf', value: props.csrf }),
+            React.createElement('input', { className: 'formSubmit', type: 'submit', value: 'Sign in' })
+        )
     );
 };
 
 //create react page for signup
 var SignupWindow = function SignupWindow(props) {
     return React.createElement(
-        "form",
-        { id: "signupForm", name: "signupForm",
-            onSubmit: handleSignup,
-            action: "/signup",
-            method: "POST",
-            className: "mainForm"
-        },
+        'div',
+        { id: 'accountFormContainer' },
         React.createElement(
-            "h1",
-            { className: "appTitle" },
-            "RuneScape IRC"
-        ),
-        React.createElement(
-            "h3",
-            { className: "signInTitle" },
-            "Sign up"
-        ),
-        React.createElement(
-            "div",
-            { id: "signupFormInput" },
+            'form',
+            { id: 'signupForm', name: 'signupForm',
+                onSubmit: handleSignup,
+                action: '/signup',
+                method: 'POST',
+                className: 'mainForm'
+            },
             React.createElement(
-                "h5",
-                null,
-                "Username:"
+                'h1',
+                { className: 'appTitle' },
+                'RuneScape IRC'
             ),
-            React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" }),
             React.createElement(
-                "h5",
-                null,
-                "Password:"
+                'h3',
+                { className: 'signInTitle' },
+                'Sign up'
             ),
-            React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" }),
+            React.createElement('hr', null),
             React.createElement(
-                "h5",
-                null,
-                "Confirm Password:"
+                'div',
+                { id: 'signupFormInput' },
+                React.createElement(
+                    'h5',
+                    null,
+                    'Username:'
+                ),
+                React.createElement('input', { id: 'user', type: 'text', name: 'username', placeholder: 'username' }),
+                React.createElement(
+                    'h5',
+                    null,
+                    'Password:'
+                ),
+                React.createElement('input', { id: 'pass', type: 'password', name: 'pass', placeholder: 'password' }),
+                React.createElement(
+                    'h5',
+                    null,
+                    'Confirm Password:'
+                ),
+                React.createElement('input', { id: 'pass2', type: 'password', name: 'pass2', placeholder: 'confirm password' })
             ),
-            React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "confirm password" })
-        ),
-        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign up" })
+            React.createElement('input', { type: 'hidden', name: '_csrf', value: props.csrf }),
+            React.createElement('input', { className: 'formSubmit', type: 'submit', value: 'Sign up' })
+        )
     );
 };
 
@@ -184,12 +210,14 @@ var setup = function setup(csrf) {
     var signupButton = document.querySelector("#signupButton");
 
     signupButton.addEventListener("click", function (e) {
+        document.querySelector('#errorContainer').style.display = 'none';
         e.preventDefault();
         createSignupWindow(csrf);
         return false;
     });
 
     loginButton.addEventListener("click", function (e) {
+        document.querySelector('#errorContainer').style.display = 'none';
         e.preventDefault();
         createLoginWindow(csrf);
         return false;
@@ -210,16 +238,17 @@ $(document).ready(function () {
 'use strict';
 
 var handleError = function handleError(message) {
-  $('#errorMessage').text(message);
-  $('#errorContainer').animate({ width: 'toggle' }, 350);
+  console.dir(message);
+  document.querySelector('#errorMessage').innerHTML = message;
+  // $('#errorContainer').animate({ display: 'block' }, 350);
+  document.querySelector('#errorContainer').style.display = 'block';
 };
 
 var redirect = function redirect(response) {
-  $('#errorContainer').animate({ width: 'hide' }, 350);
   window.location = response.redirect;
 };
 
-var sendAjax = function sendAjax(type, action, data, success) {
+var sendAjax = function sendAjax(type, action, data, _success) {
   // console.dir(action + " " + data);
   $.ajax({
     cache: false,
@@ -227,10 +256,20 @@ var sendAjax = function sendAjax(type, action, data, success) {
     url: action,
     data: data,
     dataType: 'json',
-    success: success,
+    success: function success(data2, status, xhr) {
+      // console.dir(data2);
+      // console.dir(status);
+      // console.dir(xhr);
+      _success(data2, status, xhr);
+      if (data2.message) {
+        // console.dir(data2.message);
+        handleError(data2.message);
+      }
+    },
     error: function error(xhr, status, _error) {
       var messageObj = JSON.parse(xhr.responseText);
       handleError(messageObj.error);
+      // console.dir(messageObj);
     }
   });
 };

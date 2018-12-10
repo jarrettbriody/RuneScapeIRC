@@ -1,7 +1,8 @@
 //check for valid login values, send post
 const handleLogin = (e) => {
+    document.querySelector('#errorContainer').style.display = 'none';
     e.preventDefault();
-    $("#errorContainer").animate({width:'hide'},350);
+    // $("#errorContainer").animate({width:'hide'},350);
     if($("#user").val() == '' || $("pass").val() == ''){
         handleError("Both username and password fields are required.");
         return false;
@@ -13,8 +14,9 @@ const handleLogin = (e) => {
 
 //check for valid signup values, send post
 const handleSignup = (e) => {
+    document.querySelector('#errorContainer').style.display = 'none';
     e.preventDefault();
-    $("#errorContainer").animate({width:'hide'},350);
+    // $("#errorContainer").animate({width:'hide'},350);
     if($("#user").val()=='' || $("#pass").val()=='' || $("#pass2").val()==''){
         handleError("All fields are required.");
         return false;
@@ -31,9 +33,9 @@ const NavBar = () => {
     return (
         <div id="navBar">
             <div id="titleContainer"><h1 className="appTitle">RuneScape IRC</h1></div>
-            <a href="/login"><img id="logo" src="/assets/img/logo.png" alt="logo" title="Home" /></a>
-            <div className="navlink"><a id="loginButton" href="/login">Login</a></div>
-            <div className="navlink"><a id="signupButton" href="/signup">Sign up</a></div>
+            <div className="navlink"><a href="/login" title="Home"><i className="fas fa-home"></i></a></div>
+            <div className="navlink"><a id="loginButton" href="/login"><span className="navlinkText">Log in </span><i className="fas fa-sign-in-alt"></i></a></div>
+            <div className="navlink"><a id="signupButton" href="/signup"><span className="navlinkText">Sign up </span><i className="fas fa-user-plus"></i></a></div>
         </div>
     );
 };
@@ -41,53 +43,58 @@ const NavBar = () => {
 //create react page for login
 const LoginWindow = (props) => {
     return (
-        <form id="loginForm" name="loginForm"
-            onSubmit={handleLogin}
-            action="/login"
-            method="POST"
-            className="mainForm"
-        >
-            <h1 className="appTitle">RuneScape IRC</h1>
-            <h3 className="signInTitle">Login</h3>
-            <div id="loginFormInput">
-                <div id="userContainer">
-                    <h5>Username:</h5>
-                    <input id="user" type="text" name="username" placeholder="username" />
+        <div id="accountFormContainer">
+            <form id="loginForm" name="loginForm"
+                onSubmit={handleLogin}
+                action="/login"
+                method="POST"
+                className="mainForm"
+            >
+                <h1 className="appTitle">RuneScape IRC</h1>
+                <h3 className="signInTitle">Login</h3>
+                <hr />
+                <div id="loginFormInput">
+                    <div id="userContainer">
+                        <h5>Username:</h5>
+                        <input id="user" type="text" name="username" placeholder="username" />
+                    </div>
+                    <div id="passContainer">
+                        <h5>Password:</h5>
+                        <input id="pass" type="password" name="pass" placeholder="password" />
+                    </div>
                 </div>
-                <div id="passContainer">
-                    <h5>Password:</h5>
-                    <input id="pass" type="password" name="pass" placeholder="password" />
-                </div>
-            </div>
-            <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="formSubmit" type="submit" value="Sign in" />
-        </form>
+                <input type="hidden" name="_csrf" value={props.csrf} />
+                <input className="formSubmit" type="submit" value="Sign in" />
+            </form>
+        </div>
     );
 };
 
 //create react page for signup
 const SignupWindow = (props) => {
     return (
-        <form id="signupForm" name="signupForm"
-            onSubmit={handleSignup}
-            action="/signup"
-            method="POST"
-            className="mainForm"
-        >
-            <h1 className="appTitle">RuneScape IRC</h1>
-            <h3 className="signInTitle">Sign up</h3>
-            
-            <div id="signupFormInput">
-                <h5>Username:</h5>
-                <input id="user" type="text" name="username" placeholder="username" />
-                <h5>Password:</h5>
-                <input id="pass" type="password" name="pass" placeholder="password" />
-                <h5>Confirm Password:</h5>
-                <input id="pass2" type="password" name="pass2" placeholder="confirm password" />
-            </div>
-            <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="formSubmit" type="submit" value="Sign up" />
-        </form>
+        <div id="accountFormContainer">
+            <form id="signupForm" name="signupForm"
+                onSubmit={handleSignup}
+                action="/signup"
+                method="POST"
+                className="mainForm"
+            >
+                <h1 className="appTitle">RuneScape IRC</h1>
+                <h3 className="signInTitle">Sign up</h3>
+                <hr />
+                <div id="signupFormInput">
+                    <h5>Username:</h5>
+                    <input id="user" type="text" name="username" placeholder="username" />
+                    <h5>Password:</h5>
+                    <input id="pass" type="password" name="pass" placeholder="password" />
+                    <h5>Confirm Password:</h5>
+                    <input id="pass2" type="password" name="pass2" placeholder="confirm password" />
+                </div>
+                <input type="hidden" name="_csrf" value={props.csrf} />
+                <input className="formSubmit" type="submit" value="Sign up" />
+            </form>
+        </div>
     );
 };
 
@@ -120,12 +127,14 @@ const setup = (csrf) => {
     const signupButton = document.querySelector("#signupButton");
 
     signupButton.addEventListener("click",(e) => {
+        document.querySelector('#errorContainer').style.display = 'none';
         e.preventDefault();
         createSignupWindow(csrf);
         return false;
     });
 
     loginButton.addEventListener("click", (e) => {
+        document.querySelector('#errorContainer').style.display = 'none';
         e.preventDefault();
         createLoginWindow(csrf);
         return false;

@@ -24,6 +24,11 @@ const AccountChannelPairSchema = new mongoose.Schema({
     default: false,
   },
 
+  owner: {
+    type: Boolean,
+    default: false,
+  },
+
   createdDate: {
     type: Date,
     default: Date.now,
@@ -33,6 +38,7 @@ const AccountChannelPairSchema = new mongoose.Schema({
 AccountChannelPairSchema.statics.toAPI = (doc) => ({
   userID: doc.userID,
   channelID: doc.channelID,
+  owner: doc.owner,
   accepted: doc.accepted,
 });
 
@@ -40,8 +46,8 @@ AccountChannelPairSchema.statics.findByUserID = (userID, callback) => {
   const search = {
     userID: convertId(userID),
   };
-
-  return AccountChannelPairModel.find(search).select('userID channelID accepted').exec(callback);
+  const doc = AccountChannelPairModel.find(search);
+  return doc.select('userID channelID owner accepted').exec(callback);
 };
 
 AccountChannelPairSchema.statics.findByUserAndChannel = (userID, channelID, callback) => {
@@ -49,8 +55,8 @@ AccountChannelPairSchema.statics.findByUserAndChannel = (userID, channelID, call
     userID: convertId(userID),
     channelID: convertId(channelID),
   };
-
-  return AccountChannelPairModel.find(search).select('userID channelID accepted').exec(callback);
+  const doc = AccountChannelPairModel.find(search);
+  return doc.select('userID channelID owner accepted').exec(callback);
 };
 
 AccountChannelPairSchema.statics.remove = (userID, channelID, callback) => {
@@ -60,6 +66,14 @@ AccountChannelPairSchema.statics.remove = (userID, channelID, callback) => {
   };
 
   return AccountChannelPairModel.deleteOne(search).exec(callback);
+};
+
+AccountChannelPairSchema.statics.removeAllOfChannel = (channelID, callback) => {
+  const search = {
+    channelID: convertId(channelID),
+  };
+
+  return AccountChannelPairModel.deleteMany(search).exec(callback);
 };
 
 AccountChannelPairModel = mongoose.model('AccountChannelPair', AccountChannelPairSchema);

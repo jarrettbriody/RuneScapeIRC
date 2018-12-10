@@ -126,7 +126,7 @@ const changePassword = (request, response) => {
 
           const savePromise = updatedDoc.save();
 
-          savePromise.then(() => res.json({ redirect: '/dashboard' }));
+          savePromise.then(() => res.json({ message: 'Password changed successfully.' }));
 
           savePromise.catch((err3) => {
             console.log(err3);
