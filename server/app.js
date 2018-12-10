@@ -107,7 +107,7 @@ router(app);
 
 app.use((req, res) => {
   res.status(404);
-  return res.json({ message: 'The page you are looking for does not exist.' });
+  return res.render('404');
 });
 
 app.listen(port, (err) => {
