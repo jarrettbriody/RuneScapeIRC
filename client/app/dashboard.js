@@ -535,7 +535,7 @@ const setup = function(csrf){
                 redirect({redirect:'/dashboard'});
             }
             else{
-                createChannelListWindow(document.querySelector("#hiddenCSRF").innerHTML);
+                loadChannelsFromServer(document.querySelector("#hiddenCSRF").innerHTML);
             }
         }
     };

@@ -795,7 +795,7 @@ var setup = function setup(csrf) {
             if (json.channelID === currentChannel) {
                 redirect({ redirect: '/dashboard' });
             } else {
-                createChannelListWindow(document.querySelector("#hiddenCSRF").innerHTML);
+                loadChannelsFromServer(document.querySelector("#hiddenCSRF").innerHTML);
             }
         }
     };
