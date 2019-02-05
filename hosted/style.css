@@ -126,8 +126,7 @@ nav h1{
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    margin: auto; 
-    width:300px;
+    margin: auto;
     vertical-align: center;
     font-size: 1.75em;
 }
